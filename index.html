@@ -17,6 +17,9 @@
             padding: 0;
             background-color: #f0f2f5;
             color: #333;
+            /* 強制瀏覽器列印背景顏色與漸層 */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         /* 頂部導覽列首頁選單與操作按鈕整合 */
@@ -146,7 +149,7 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            background: #17a2b8;
+            background: #17a2b8 !important;
             color: white;
             padding: 8px 15px;
             border-radius: 8px;
@@ -165,8 +168,8 @@
         .score-num {
             font-size: 26px;
             font-weight: bold;
-            background: #000;
-            color: #ffeb3b;
+            background: #000 !important;
+            color: #ffeb3b !important;
             padding: 2px 14px;
             border-radius: 6px;
             min-width: 36px;
@@ -202,7 +205,7 @@
             vertical-align: middle;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2 !important;
             font-weight: bold;
         }
         input.cell-input {
@@ -271,7 +274,7 @@
             border: 1px dashed #999;
             padding: 8px 10px;
             border-radius: 4px;
-            background: #fafafa;
+            background: #fafafa !important;
         }
         .notes-section h4 {
             margin: 0 0 5px 0;
@@ -356,7 +359,7 @@
             font-weight: bold;
             font-size: 13px;
             margin-bottom: 4px;
-            background: #e6e6e6;
+            background: #e6e6e6 !important;
             padding: 3px;
             text-align: center;
             border: 1px solid #333;
@@ -369,7 +372,7 @@
         }
         .zone-panel {
             flex: 1;
-            background: #f8f9fa;
+            background: #f8f9fa !important;
             border: 1px solid #ccc;
             border-radius: 8px;
             padding: 15px;
@@ -402,8 +405,8 @@
             text-align: center;
         }
         .net-indicator-bar {
-            background: #343a40;
-            color: #ffeb3b;
+            background: #343a40 !important;
+            color: #ffeb3b !important;
             font-weight: bold;
             font-size: 12px;
             padding: 6px;
@@ -440,19 +443,19 @@
         }
         .special-zone-btn {
             flex: 1;
-            background: #ffc107;
+            background: #ffc107 !important;
             border: 2px solid #e0a800;
             padding: 8px 0;
             font-size: 13px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            color: #333;
+            color: #333 !important;
         }
         .special-zone-btn.out {
-            background: #dc3545;
+            background: #dc3545 !important;
+            color: white !important;
             border-color: #bd2130;
-            color: white;
         }
         .special-zone-btn:hover { opacity: 0.9; }
 
@@ -474,12 +477,33 @@
             padding: 0;
         }
 
+        /* 列印專屬排版規則：強制每一個分頁容器 (page-container) 獨立從新的一頁開始 */
         @media print {
             .hub-nav { display: none; }
             .score-ctrl-btn { display: none; }
             body { background: none; padding: 0; }
+            
+            /* 讓所有視圖在列印時強制全部展開顯示 */
             .app-view { display: block !important; }
-            .page-container { box-shadow: none; margin: 0; padding: 0; width: 100%; min-height: auto; }
+            
+            /* 關鍵：強制讓每一個 .page-container 獨立開新一頁 */
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                min-height: auto;
+                break-before: page !important;
+                page-break-before: always !important;
+            }
+            
+            /* 確保第一頁的第一個區塊不要多出空白頁 */
+            .app-view.active .page-container:first-of-type,
+            #scoreApp .page-container:first-of-type {
+                break-before: avoid !important;
+                page-break-before: avoid !important;
+            }
+
             .count-btn, .add-row-btn { display: none; }
         }
     </style>
@@ -506,6 +530,7 @@
 
     <!-- ================= 視圖一：原本的比賽計分與總表 ================= -->
     <div id="scoreApp" class="app-view active">
+        <!-- 區塊一：球員整場總數據統計 -->
         <div class="page-container">
             <h1>排球比賽記錄表 - 球員整場總數據統計 (全場累積)</h1>
             <div class="subtitle">VOLLEYBALL MATCH RECORD SHEET (TOTAL CUMULATIVE STATISTICS)</div>
@@ -550,7 +575,7 @@
             </div>
         </div>
 
-        <!-- 焦點錨點：切回此分頁時自動捲動至逐分記錄表 -->
+        <!-- 區塊二：逐分記錄表 -->
         <div class="page-container" id="pointLogSection">
             <h1>排球比賽記錄表 - 逐分記錄表</h1>
             <div class="subtitle">POINT-BY-POINT LOG (OUR TEAM VS OPPONENT)</div>
@@ -782,7 +807,7 @@
                 <h4>4. 💾 資料儲存與列印</h4>
                 <ul>
                     <li><strong>自動離線儲存：</strong>所有輸入的球員、比分與落點皆透過瀏覽器 `LocalStorage` 自動保存，關閉網頁資料也不會遺失。</li>
-                    <li><strong>列印 / 輸出 PDF：</strong>點擊右上角綠色按鈕即可一鍵排版輸出為 A4 橫式報表。</li>
+                    <li><strong>列印 / 輸出 PDF：</strong>點擊右上角綠色按鈕即可一鍵排版輸出為 A4 橫式報表，支援各頁獨立開新頁面與背景顏色保留。</li>
                 </ul>
             </div>
             <button class="btn btn-danger" style="width: 100%; margin-top: 15px;" onclick="toggleHelpModal(false)">關閉說明書</button>
@@ -826,7 +851,7 @@
                 }, 50);
             } else if(viewId === 'zoneApp') {
                 document.querySelectorAll('.nav-btn')[1].classList.add('active');
-                document.getElementById('playSetSelect').value = activeSet; // 同步局數選單
+                document.getElementById('playSetSelect').value = activeSet;
                 updateZoneTrackerPlayerSelects();
             } else if(viewId === 'analysisApp') {
                 document.querySelectorAll('.nav-btn')[2].classList.add('active');
@@ -1097,7 +1122,7 @@
             saveAllData();
             activeSet = parseInt(setNo);
             loadSetDataToUI(activeSet);
-            document.getElementById('playSetSelect').value = activeSet; // 同步第二頁局數
+            document.getElementById('playSetSelect').value = activeSet;
             recalcAllStats();
             updateScoreboardFromTables();
         }
@@ -1156,7 +1181,6 @@
 
             let currentPlaySet = document.getElementById('playSetSelect').value;
 
-            // 只篩選顯示當前選擇局數的落點記錄
             let serveLogs = playLogs.map((log, idx) => ({ ...log, originalIndex: idx })).filter(l => l.action === '發球' && String(l.set) === String(currentPlaySet));
             let attackLogs = playLogs.map((log, idx) => ({ ...log, originalIndex: idx })).filter(l => l.action === '攻擊' && String(l.set) === String(currentPlaySet));
 
@@ -1193,7 +1217,6 @@
             }
         }
 
-        // 當切換第二頁的局數選單時，即時更新下方表格顯示
         document.getElementById('playSetSelect').addEventListener('change', function() {
             renderPlayLogs();
         });
@@ -1255,7 +1278,7 @@
                     let bgColor = `rgba(0, 123, 255, ${intensity})`;
                     let textColor = intensity > 0.5 ? '#fff' : '#333';
                     let desc = i===1?'前排左':(i===2?'前排中':(i===3?'前排右':(i===4?'中路左':(i===5?'中路中':(i===6?'中路右':(i===7?'後排左':(i===8?'後排中':'後排右')))))));
-                    html += `<div style="background: ${bgColor}; color: ${textColor}; padding: 6px 2px; border-radius: 4px; font-size: 11px; border: 1px solid rgba(0,0,0,0.1);">${i}區(${desc})<br><strong>${count}</strong>次</div>`;
+                    html += `<div style="background: ${bgColor} !important; color: ${textColor}; padding: 6px 2px; border-radius: 4px; font-size: 11px; border: 1px solid rgba(0,0,0,0.1);">${i}區(${desc})<br><strong>${count}</strong>次</div>`;
                 }
                 html += `</div><div style="background: #6c757d; color: #fff; font-size: 9px; text-align: center; padding: 2px; border-radius: 3px; margin-top: 4px;">▼ 底線方向 (7、8、9 區為後排底線) ▼</div></div>`;
 
@@ -1274,7 +1297,7 @@
                     let bgColor = `rgba(40, 167, 69, ${intensity})`;
                     let textColor = intensity > 0.5 ? '#fff' : '#333';
                     let desc = i===1?'前排左':(i===2?'前排中':(i===3?'前排右':(i===4?'中路左':(i===5?'中路中':(i===6?'中路右':(i===7?'後排左':(i===8?'後排中':'後排右')))))));
-                    html += `<div style="background: ${bgColor}; color: ${textColor}; padding: 6px 2px; border-radius: 4px; font-size: 11px; border: 1px solid rgba(0,0,0,0.1);">${i}區(${desc})<br><strong>${count}</strong>次</div>`;
+                    html += `<div style="background: ${bgColor} !important; color: ${textColor}; padding: 6px 2px; border-radius: 4px; font-size: 11px; border: 1px solid rgba(0,0,0,0.1);">${i}區(${desc})<br><strong>${count}</strong>次</div>`;
                 }
                 html += `</div><div style="background: #6c757d; color: #fff; font-size: 9px; text-align: center; padding: 2px; border-radius: 3px; margin-top: 4px;">▼ 底線方向 (7、8、9 區為後排底線) ▼</div></div></div></div>`;
             }
@@ -1388,14 +1411,10 @@
         }
 
         function clearCurrentSet() {
-            if(confirm(`確定要清空「第 ${activeSet} 局」的所有逐分記錄、戰術與逐球落點嗎？`)) {
-                // 清空計分與戰術
+            if(confirm(`確定要清空「第 ${activeSet} 局」的所有逐分記錄、戰術與逐球落點嗎？（第一頁的整場總成績會自動扣除本局數據）`)) {
                 setsData[activeSet] = { finalScore: "", tactics: "", ourLog: [], oppLog: [] };
                 loadSetDataToUI(activeSet);
-                
-                // 同步清空該局的逐球落點記錄
                 playLogs = playLogs.filter(log => String(log.set) !== String(activeSet));
-                
                 saveAllData();
                 recalcAllStats();
                 updateScoreboardFromTables();
