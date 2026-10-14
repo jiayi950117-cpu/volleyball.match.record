@@ -478,21 +478,25 @@
         }
 
         /* 列印專屬排版規則：強制每一個分頁容器 (page-container) 獨立從新的一頁開始 */
+        /* 列印專屬排版規則：強制每一個分頁容器與熱點區塊絕對獨立分頁 */
         @media print {
-            .hub-nav { display: none; }
-            .score-ctrl-btn { display: none; }
-            body { background: none; padding: 0; }
+            .hub-nav { display: none !important; }
+            .score-ctrl-btn { display: none !important; }
+            body { background: none !important; padding: 0 !important; }
             
-            /* 讓所有視圖在列印時強制全部展開顯示 */
-            .app-view { display: block !important; }
+            /* 強制讓所有頁面視圖在列印時展開 */
+            .app-view { 
+                display: block !important; 
+                position: static !important;
+            }
             
-            /* 關鍵：強制讓每一個 .page-container 獨立開新一頁 */
+            /* 讓每一個 .page-container 絕對強制從新的一頁開始 */
             .page-container {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                min-height: auto;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 5mm 0 !important;
+                width: 100% !important;
+                min-height: auto !important;
                 break-before: page !important;
                 page-break-before: always !important;
             }
@@ -504,7 +508,14 @@
                 page-break-before: avoid !important;
             }
 
-            .count-btn, .add-row-btn { display: none; }
+            /* 針對動態生成的第三頁分析區塊（球員熱點卡片）加上防黏連保護 */
+            #analysisContentContainer > div {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                margin-bottom: 15mm !important;
+            }
+
+            .count-btn, .add-row-btn { display: none !important; }
         }
     </style>
 </head>
